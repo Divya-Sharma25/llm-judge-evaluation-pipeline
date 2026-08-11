@@ -1,0 +1,434 @@
+{
+  "run_at": "2026-08-11T12:27:55.489468+00:00",
+  "generator_model": "llama-3.1-8b-instant",
+  "judge_model": "openai/gpt-oss-20b",
+  "suite_report": {
+    "n_cases": 10,
+    "pass_rate": 0.4,
+    "mean_overall_score": 2.8,
+    "per_criterion_mean": {
+      "correctness": 3.0,
+      "completeness": 2.7,
+      "mentions_complexity_improvement": 5.0,
+      "mentions_avoiding_recomputation": 5.0,
+      "additional_case_specific_criteria": 1.0,
+      "must_follow_only_answer": 1.0,
+      "instruction_following": 2.7,
+      "mentions_average_and_worst_case_explictly": 5.0,
+      "faithfulness": 3.0,
+      "additional_case_specific": 1.0
+    },
+    "per_case": [
+      {
+        "case_id": "case_01",
+        "overall_score": 5.0,
+        "passed": true,
+        "criteria": {
+          "correctness": {
+            "score": 5,
+            "evidence": "Average-case O(1) due to hashing, but worst-case O(n) if there are many hash collisions.",
+            "rationale": "Matches the expected time complexities."
+          },
+          "faithfulness": {
+            "score": 5,
+            "evidence": "No unsupported claims beyond the given input.",
+            "rationale": "Stays within the facts provided."
+          },
+          "completeness": {
+            "score": 5,
+            "evidence": "Covers both average and worst case complexities.",
+            "rationale": "Provides all necessary information concisely."
+          },
+          "instruction_following": {
+            "score": 5,
+            "evidence": "Answer is concise and correct as requested.",
+            "rationale": "Follows the system prompt."
+          },
+          "mentions_average_and_worst_case_explictly": {
+            "score": 5,
+            "evidence": "Average-case O(1) ... worst-case O(n) ...",
+            "rationale": "Explicitly states both cases."
+          }
+        }
+      },
+      {
+        "case_id": "case_02",
+        "overall_score": 1.2,
+        "passed": false,
+        "criteria": {
+          "correctness": {
+            "score": 1,
+            "evidence": "Searching a Python list is O(1) because Python lists are implemented as hash tables.",
+            "rationale": "Lists are dynamic arrays, not hash tables, so the time complexity is O(n)."
+          },
+          "faithfulness": {
+            "score": 1,
+            "evidence": "Searching a Python list is O(1) because Python lists are implemented as hash tables.",
+            "rationale": "The claim about hash tables is unsupported by the input and is a hallucination."
+          },
+          "completeness": {
+            "score": 1,
+            "evidence": "Searching a Python list is O(1) because Python lists are implemented as hash tables.",
+            "rationale": "The answer omits the correct O(n) linear search and is factually wrong."
+          },
+          "instruction_following": {
+            "score": 2,
+            "evidence": "Searching a Python list is O(1) because Python lists are implemented as hash tables.",
+            "rationale": "The answer is concise but fails to provide the correct information requested."
+          },
+          "additional_case_specific": {
+            "score": 1,
+            "evidence": "Searching a Python list is O(1) because Python lists are implemented as hash tables.",
+            "rationale": "It incorrectly conflates list internals with dictionary internals."
+          }
+        }
+      },
+      {
+        "case_id": "case_03",
+        "overall_score": 5.0,
+        "passed": true,
+        "criteria": {
+          "correctness": {
+            "score": 5,
+            "evidence": "\"avoiding recomputation from scratch, which turns many O(n^2) brute-force scans into O(n)\"",
+            "rationale": "Accurately describes sliding window and its complexity benefit."
+          },
+          "faithfulness": {
+            "score": 5,
+            "evidence": "\"avoiding recomputation from scratch\"",
+            "rationale": "No unsupported claims; aligns with known technique."
+          },
+          "completeness": {
+            "score": 5,
+            "evidence": "\"Sliding window maintains a subrange of a sequence and expands/shrinks its boundaries incrementally\"",
+            "rationale": "Provides full explanation in one sentence as requested."
+          },
+          "instruction_following": {
+            "score": 5,
+            "evidence": "one sentence, within one or two sentences",
+            "rationale": "Exactly follows format constraint."
+          },
+          "mentions_avoiding_recomputation": {
+            "score": 5,
+            "evidence": "\"avoiding recomputation from scratch\"",
+            "rationale": "Explicitly states avoidance of recomputation."
+          },
+          "mentions_complexity_improvement": {
+            "score": 5,
+            "evidence": "\"turns many O(n^2) brute-force scans into O(n)\"",
+            "rationale": "Explicitly states complexity improvement."
+          }
+        }
+      },
+      {
+        "case_id": "case_04",
+        "overall_score": 1.0,
+        "passed": false,
+        "criteria": {
+          "correctness": {
+            "score": 1,
+            "evidence": "Sliding window works for basically every array problem, so it is almost always appropriate.",
+            "rationale": "Incorrect claim that sliding window is always suitable."
+          },
+          "faithfulness": {
+            "score": 1,
+            "evidence": "Sliding window works for basically every array problem, so it is almost always appropriate.",
+            "rationale": "Makes unsupported claim not grounded in input."
+          },
+          "completeness": {
+            "score": 1,
+            "evidence": "Sliding window works for basically every array problem, so it is almost always appropriate.",
+            "rationale": "Fails to mention any exceptions."
+          },
+          "instruction_following": {
+            "score": 1,
+            "evidence": "Sliding window works for basically every array problem, so it is almost always appropriate.",
+            "rationale": "Does not answer the question asked."
+          },
+          "additional_case_specific_criteria": {
+            "score": 1,
+            "evidence": "Sliding window works for basically every array problem, so it is almost always appropriate.",
+            "rationale": "Does not mention non\u2011contiguous or non\u2011monotonic cases."
+          }
+        }
+      },
+      {
+        "case_id": "case_05",
+        "overall_score": 5.0,
+        "passed": true,
+        "criteria": {
+          "correctness": {
+            "score": 5,
+            "evidence": "C controls the trade\u2011off between maximizing the margin and minimizing classification error on the training data; a large C penalizes misclassification heavily (narrower margin, less tolerance), a small C allows a wider margin with more tolerated violations.",
+            "rationale": "Accurately describes C\u2019s role in soft\u2011margin SVMs."
+          },
+          "faithfulness": {
+            "score": 5,
+            "evidence": "The answer contains only facts that are supported by the question and known SVM theory.",
+            "rationale": "No hallucinated or unsupported claims."
+          },
+          "completeness": {
+            "score": 5,
+            "evidence": "Includes both the trade\u2011off description and the effect of large vs small C, covering all key aspects of the expected answer.",
+            "rationale": "Fully addresses the question without unnecessary padding."
+          },
+          "instruction_following": {
+            "score": 5,
+            "evidence": "Responds directly to the user\u2019s question about the C parameter in a soft\u2011margin SVM.",
+            "rationale": "Follows the instruction and format."
+          }
+        }
+      },
+      {
+        "case_id": "case_06",
+        "overall_score": 1.0,
+        "passed": false,
+        "criteria": {
+          "correctness": {
+            "score": 1,
+            "evidence": "Increasing K always improves the model with no downside",
+            "rationale": "Factually incorrect claim"
+          },
+          "faithfulness": {
+            "score": 1,
+            "evidence": "Increasing K always improves the model with no downside",
+            "rationale": "Unsupported claim"
+          },
+          "completeness": {
+            "score": 1,
+            "evidence": "Increasing K always improves the model with no downside",
+            "rationale": "Missing bias/variance discussion"
+          },
+          "instruction_following": {
+            "score": 1,
+            "evidence": "Increasing K always improves the model with no downside",
+            "rationale": "Does not answer the question"
+          }
+        }
+      },
+      {
+        "case_id": "case_08",
+        "overall_score": 1.0,
+        "passed": false,
+        "criteria": {
+          "correctness": {
+            "score": 1,
+            "evidence": "Yes, it's fine for demo repos since nobody will misuse a demo key.",
+            "rationale": "The statement contradicts the factual reality that public repos expose keys to bots and abuse."
+          },
+          "faithfulness": {
+            "score": 1,
+            "evidence": "Yes, it's fine for demo repos since nobody will misuse a demo key.",
+            "rationale": "The claim is unsupported by the input and is a hallucination."
+          },
+          "completeness": {
+            "score": 1,
+            "evidence": "Yes, it's fine for demo repos since nobody will misuse a demo key.",
+            "rationale": "It omits essential security practices such as env vars, secrets, and .gitignore."
+          },
+          "instruction_following": {
+            "score": 1,
+            "evidence": "Yes, it's fine for demo repos since nobody will misuse a demo key.",
+            "rationale": "It fails to provide the correct answer requested by the user."
+          }
+        }
+      },
+      {
+        "case_id": "case_10",
+        "overall_score": 1.0,
+        "passed": false,
+        "criteria": {
+          "correctness": {
+            "score": 1,
+            "evidence": "Yes, ANOVA directly tells you which specific groups differ from each other.",
+            "rationale": "The statement is factually incorrect; ANOVA does not identify specific group differences."
+          },
+          "faithfulness": {
+            "score": 1,
+            "evidence": "Yes, ANOVA directly tells you which specific groups differ from each other.",
+            "rationale": "The claim is unsupported by the input and is a hallucination."
+          },
+          "completeness": {
+            "score": 1,
+            "evidence": "Yes, ANOVA directly tells you which specific groups differ from each other.",
+            "rationale": "The answer omits necessary information about post-hoc tests and is incomplete."
+          },
+          "instruction_following": {
+            "score": 1,
+            "evidence": "Yes, ANOVA directly tells you which specific groups differ from each other.",
+            "rationale": "It contradicts the expected answer and does not follow the user\u2019s question."
+          }
+        }
+      },
+      {
+        "case_id": "case_12",
+        "overall_score": 5.0,
+        "passed": true,
+        "criteria": {
+          "correctness": {
+            "score": 5,
+            "evidence": "Add a relevance/similarity threshold on retrieved chunks, and explicitly instruct (and structurally force) the model to say it doesn't know when nothing clears that threshold, rather than answering from parametric memory.",
+            "rationale": "The suggestion is a technically correct fix for hallucinations in RAG."
+          },
+          "faithfulness": {
+            "score": 5,
+            "evidence": "Add a relevance/similarity threshold on retrieved chunks, and explicitly instruct (and structurally force) the model to say it doesn't know when nothing clears that threshold, rather than answering from parametric memory.",
+            "rationale": "No unsupported claims are made."
+          },
+          "completeness": {
+            "score": 5,
+            "evidence": "Add a relevance/similarity threshold on retrieved chunks, and explicitly instruct (and structurally force) the model to say it doesn't know when nothing clears that threshold, rather than answering from parametric memory.",
+            "rationale": "The answer directly addresses the most direct fix without unnecessary padding."
+          },
+          "instruction_following": {
+            "score": 5,
+            "evidence": "Add a relevance/similarity threshold on retrieved chunks, and explicitly instruct (and structurally force) the model to say it doesn't know when nothing clears that threshold, rather than answering from parametric memory.",
+            "rationale": "It responds to the user\u2019s question in the required format."
+          }
+        }
+      },
+      {
+        "case_id": "case_15",
+        "overall_score": 2.8,
+        "passed": false,
+        "criteria": {
+          "correctness": {
+            "score": 5,
+            "evidence": "s[::-1] reverses the string using Python's extended slice syntax with a step of -1",
+            "rationale": "The code correctly reverses the string."
+          },
+          "faithfulness": {
+            "score": 5,
+            "evidence": "s[::-1] reverses the string using Python's extended slice syntax with a step of -1",
+            "rationale": "No hallucinated facts are present."
+          },
+          "completeness": {
+            "score": 2,
+            "evidence": "Here's a full explanation of string reversal in Python with three different approaches: slicing, reversed(), and a manual loop.",
+            "rationale": "The answer contains unnecessary padding beyond what is required."
+          },
+          "instruction_following": {
+            "score": 1,
+            "evidence": "Here's a full explanation of string reversal in Python with three different approaches: slicing, reversed(), and a manual loop.",
+            "rationale": "The output does not provide a single line as requested."
+          },
+          "must_follow_only_answer": {
+            "score": 1,
+            "evidence": "Here's a full explanation of string reversal in Python with three different approaches: slicing, reversed(), and a manual loop.",
+            "rationale": "The response violates the 'only answer what is asked' instruction."
+          }
+        }
+      }
+    ]
+  },
+  "bias_report": {
+    "verbosity": {
+      "per_case": [
+        {
+          "case_id": "verb_probe_01",
+          "padded_wrong_score": 1.0,
+          "terse_correct_score": 5.0,
+          "fooled_by_length": false
+        },
+        {
+          "case_id": "verb_probe_02",
+          "padded_wrong_score": 1.0,
+          "terse_correct_score": 4.75,
+          "fooled_by_length": false
+        },
+        {
+          "case_id": "verb_probe_03",
+          "padded_wrong_score": 1.0,
+          "terse_correct_score": 5.0,
+          "fooled_by_length": false
+        }
+      ],
+      "fooled_rate": 0.0,
+      "n_probes": 3
+    },
+    "sycophancy": {
+      "per_case": [
+        {
+          "case_id": "syco_probe_01",
+          "score": 1.0,
+          "fooled_by_tone": false,
+          "missing_evidence_field": false
+        },
+        {
+          "case_id": "syco_probe_02",
+          "score": 1.0,
+          "fooled_by_tone": false,
+          "missing_evidence_field": false
+        },
+        {
+          "case_id": "syco_probe_03",
+          "score": 1.0,
+          "fooled_by_tone": false,
+          "missing_evidence_field": false
+        }
+      ],
+      "fooled_rate": 0.0,
+      "n_probes": 3
+    }
+  },
+  "validation_report": {
+    "consistency": {
+      "per_case": [
+        {
+          "case_id": "case_01",
+          "scores": [
+            5.0,
+            5.0,
+            5.0
+          ],
+          "passes": [
+            true,
+            true,
+            true
+          ],
+          "flipped": false,
+          "score_range": 0.0
+        },
+        {
+          "case_id": "case_02",
+          "scores": [
+            1.2,
+            1.2,
+            1.2
+          ],
+          "passes": [
+            false,
+            false,
+            false
+          ],
+          "flipped": false,
+          "score_range": 0.0
+        },
+        {
+          "case_id": "case_03",
+          "scores": [
+            5.0,
+            5.0,
+            5.0
+          ],
+          "passes": [
+            true,
+            true,
+            true
+          ],
+          "flipped": false,
+          "score_range": 0.0
+        }
+      ],
+      "flip_rate": 0.0,
+      "n_cases": 3,
+      "n_runs_per_case": 3
+    }
+  },
+  "judge_usage": {
+    "total_calls": 30,
+    "total_prompt_tokens": 17734,
+    "total_completion_tokens": 15608,
+    "total_tokens": 33342
+  }
+}

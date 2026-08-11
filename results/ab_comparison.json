@@ -1,0 +1,361 @@
+{
+  "run_at": "2026-08-11T12:35:39.806500+00:00",
+  "label_a": "v1",
+  "label_b": "v2",
+  "report_a": {
+    "n_cases": 5,
+    "pass_rate": 1.0,
+    "mean_overall_score": 5.0,
+    "per_criterion_mean": {
+      "correctness": 5.0,
+      "faithfulness": 5.0,
+      "instruction_following": 5.0,
+      "completeness": 5.0
+    },
+    "per_case": [
+      {
+        "case_id": "ab_01",
+        "overall_score": 5.0,
+        "passed": true,
+        "criteria": {
+          "correctness": {
+            "score": 5,
+            "evidence": "The time complexity of binary search is O(log n)",
+            "rationale": "Accurately states the known complexity."
+          },
+          "faithfulness": {
+            "score": 5,
+            "evidence": "No unsupported claims beyond O(log n) and definition of n",
+            "rationale": "Stays within given facts."
+          },
+          "completeness": {
+            "score": 5,
+            "evidence": "Provides the exact complexity in one line",
+            "rationale": "Fully answers the question without extra content."
+          },
+          "instruction_following": {
+            "score": 5,
+            "evidence": "Answer is one line and directly addresses the user\u2019s question",
+            "rationale": "Meets all format and content requirements."
+          }
+        }
+      },
+      {
+        "case_id": "ab_02",
+        "overall_score": 5.0,
+        "passed": true,
+        "criteria": {
+          "correctness": {
+            "score": 5,
+            "evidence": "The Global Interpreter Lock (GIL) in CPython prevents multiple native threads from executing Python bytecodes at once, ensuring thread safety but potentially limiting multithreaded performance.",
+            "rationale": "Accurately describes the GIL\u2019s function."
+          },
+          "faithfulness": {
+            "score": 5,
+            "evidence": "The output contains only facts directly supported by the question and known behavior of CPython.",
+            "rationale": "No unsupported claims are made."
+          },
+          "completeness": {
+            "score": 5,
+            "evidence": "The single sentence fully answers the question in one line.",
+            "rationale": "All essential aspects of the GIL\u2019s role are covered."
+          },
+          "instruction_following": {
+            "score": 5,
+            "evidence": "The answer is one line, as requested.",
+            "rationale": "It follows the format constraint."
+          }
+        }
+      },
+      {
+        "case_id": "ab_03",
+        "overall_score": 5.0,
+        "passed": true,
+        "criteria": {
+          "correctness": {
+            "score": 5,
+            "evidence": "reducing the time complexity from O(n^2) to O(n) by avoiding redundant comparisons",
+            "rationale": "accurately states the performance benefit of using a hash map"
+          },
+          "faithfulness": {
+            "score": 5,
+            "evidence": "Using a hash map for a two-sum problem allows for efficient lookups and storage of previously seen numbers",
+            "rationale": "no unsupported claims, aligns with standard explanation"
+          },
+          "completeness": {
+            "score": 5,
+            "evidence": "efficient lookups and storage of previously seen numbers, reducing the time complexity from O(n^2) to O(n)",
+            "rationale": "covers the key reason in a single line, no unnecessary padding"
+          },
+          "instruction_following": {
+            "score": 5,
+            "evidence": "In one line, why use a hash map for a two-sum problem?",
+            "rationale": "output is a single line that directly answers the question"
+          }
+        }
+      },
+      {
+        "case_id": "ab_04",
+        "overall_score": 5.0,
+        "passed": true,
+        "criteria": {
+          "correctness": {
+            "score": 5,
+            "evidence": "The purpose of a validation set is to evaluate the performance of a model on unseen data during the training process, allowing for adjustments to be made to improve its accuracy and prevent overfitting.",
+            "rationale": "Accurately describes the standard role of a validation set."
+          },
+          "faithfulness": {
+            "score": 5,
+            "evidence": "The output contains no claims beyond standard knowledge about validation sets.",
+            "rationale": "No hallucinated or unsupported statements."
+          },
+          "completeness": {
+            "score": 5,
+            "evidence": "The single sentence fully explains the purpose without extraneous detail.",
+            "rationale": "Covers all essential aspects of the validation set\u2019s purpose."
+          },
+          "instruction_following": {
+            "score": 5,
+            "evidence": "The answer is one line, as requested.",
+            "rationale": "Matches the user\u2019s format requirement."
+          }
+        }
+      },
+      {
+        "case_id": "ab_05",
+        "overall_score": 5.0,
+        "passed": true,
+        "criteria": {
+          "correctness": {
+            "score": 5,
+            "evidence": "For an API endpoint, idempotent means that making the same request multiple times has the same effect as making it once, ensuring that the outcome remains consistent regardless of the number of attempts.",
+            "rationale": "Accurately defines idempotence for APIs."
+          },
+          "faithfulness": {
+            "score": 5,
+            "evidence": "The statement contains no unsupported claims beyond the definition of idempotence.",
+            "rationale": "No hallucinated or extraneous information."
+          },
+          "completeness": {
+            "score": 5,
+            "evidence": "The answer succinctly captures the essential meaning of idempotence for an API endpoint.",
+            "rationale": "Fully addresses the question without unnecessary padding."
+          },
+          "instruction_following": {
+            "score": 5,
+            "evidence": "The response is a single line as requested.",
+            "rationale": "Matches the format constraint exactly."
+          }
+        }
+      }
+    ]
+  },
+  "report_b": {
+    "n_cases": 5,
+    "pass_rate": 1.0,
+    "mean_overall_score": 5.0,
+    "per_criterion_mean": {
+      "correctness": 5.0,
+      "faithfulness": 5.0,
+      "instruction_following": 5.0,
+      "completeness": 5.0
+    },
+    "per_case": [
+      {
+        "case_id": "ab_01",
+        "overall_score": 5.0,
+        "passed": true,
+        "criteria": {
+          "correctness": {
+            "score": 5,
+            "evidence": "The time complexity of binary search is O(log n).",
+            "rationale": "Accurately states the known complexity."
+          },
+          "faithfulness": {
+            "score": 5,
+            "evidence": "No unsupported claims are made.",
+            "rationale": "Answer is fully supported by the input."
+          },
+          "completeness": {
+            "score": 5,
+            "evidence": "Answer is concise and directly addresses the question.",
+            "rationale": "No unnecessary information is added."
+          },
+          "instruction_following": {
+            "score": 5,
+            "evidence": "One line, no preamble, no elaboration, no markdown.",
+            "rationale": "Strictly follows the format constraints."
+          }
+        }
+      },
+      {
+        "case_id": "ab_02",
+        "overall_score": 5.0,
+        "passed": true,
+        "criteria": {
+          "correctness": {
+            "score": 5,
+            "evidence": "The Global Interpreter Lock (GIL) in CPython prevents multiple native threads from executing Python bytecodes at once, ensuring thread safety but potentially limiting multithreaded performance.",
+            "rationale": "Accurately describes the GIL\u2019s function."
+          },
+          "faithfulness": {
+            "score": 5,
+            "evidence": "The output contains only facts about the GIL that are well-known and supported by the context.",
+            "rationale": "No hallucinated or unsupported claims."
+          },
+          "completeness": {
+            "score": 5,
+            "evidence": "It succinctly states the GIL\u2019s role and its impact on multithreading, covering the essential answer.",
+            "rationale": "Fully answers the question in one line."
+          },
+          "instruction_following": {
+            "score": 5,
+            "evidence": "One line, no preamble, no elaboration, no markdown.",
+            "rationale": "Strictly follows the format constraints."
+          }
+        }
+      },
+      {
+        "case_id": "ab_03",
+        "overall_score": 5.0,
+        "passed": true,
+        "criteria": {
+          "correctness": {
+            "score": 5,
+            "evidence": "A hash map is used for the two-sum problem because it allows for constant time lookups, enabling efficient retrieval of the complement of a given number to achieve the desired sum.",
+            "rationale": "Accurately describes the technical advantage of a hash map."
+          },
+          "faithfulness": {
+            "score": 5,
+            "evidence": "The answer only states facts supported by the input context.",
+            "rationale": "No unsupported claims are made."
+          },
+          "completeness": {
+            "score": 5,
+            "evidence": "It explains the key reason\u2014constant\u2011time lookups for complement retrieval\u2014covering the full answer.",
+            "rationale": "Fully addresses the question without unnecessary padding."
+          },
+          "instruction_following": {
+            "score": 5,
+            "evidence": "One line, no preamble, no elaboration, no markdown.",
+            "rationale": "Strictly follows the format constraints."
+          }
+        }
+      },
+      {
+        "case_id": "ab_04",
+        "overall_score": 5.0,
+        "passed": true,
+        "criteria": {
+          "correctness": {
+            "score": 5,
+            "evidence": "The purpose of a validation set is to evaluate the performance of a model on unseen data during the training process, preventing overfitting and allowing for hyperparameter tuning.",
+            "rationale": "Accurately describes the standard role of a validation set."
+          },
+          "faithfulness": {
+            "score": 5,
+            "evidence": "The output contains only facts consistent with common machine learning knowledge.",
+            "rationale": "No unsupported claims are present."
+          },
+          "completeness": {
+            "score": 5,
+            "evidence": "The answer succinctly lists all key purposes of a validation set in one line.",
+            "rationale": "Fully addresses the question without unnecessary padding."
+          },
+          "instruction_following": {
+            "score": 5,
+            "evidence": "One line, no preamble, no elaboration, no markdown.",
+            "rationale": "Strictly follows the format constraints."
+          }
+        }
+      },
+      {
+        "case_id": "ab_05",
+        "overall_score": 5.0,
+        "passed": true,
+        "criteria": {
+          "correctness": {
+            "score": 5,
+            "evidence": "An idempotent API endpoint is one where making the same request multiple times has the same effect as making it once",
+            "rationale": "Accurately defines idempotence for APIs."
+          },
+          "faithfulness": {
+            "score": 5,
+            "evidence": "No unsupported claims, only standard definition",
+            "rationale": "Stays within known facts."
+          },
+          "completeness": {
+            "score": 5,
+            "evidence": "Provides full definition in one line",
+            "rationale": "Covers all necessary aspects of the definition."
+          },
+          "instruction_following": {
+            "score": 5,
+            "evidence": "One line, no preamble, no markdown",
+            "rationale": "Fully follows formatting constraints."
+          }
+        }
+      }
+    ]
+  },
+  "comparison": {
+    "label_a": "v1",
+    "label_b": "v2",
+    "mean_score_a": 5.0,
+    "mean_score_b": 5.0,
+    "score_diff_b_minus_a": 0.0,
+    "winner": "tie",
+    "per_case_win_counts": {
+      "a": 0,
+      "b": 0,
+      "tie": 5
+    }
+  },
+  "position_bias_check": {
+    "per_case": [
+      {
+        "case_id": "ab_01",
+        "forward_winner": "A",
+        "reversed_raw_winner": "B",
+        "reversed_normalized_winner": "A",
+        "flipped": false
+      },
+      {
+        "case_id": "ab_02",
+        "forward_winner": "tie",
+        "reversed_raw_winner": "tie",
+        "reversed_normalized_winner": "tie",
+        "flipped": false
+      },
+      {
+        "case_id": "ab_03",
+        "forward_winner": "A",
+        "reversed_raw_winner": "B",
+        "reversed_normalized_winner": "A",
+        "flipped": false
+      },
+      {
+        "case_id": "ab_04",
+        "forward_winner": "B",
+        "reversed_raw_winner": "A",
+        "reversed_normalized_winner": "B",
+        "flipped": false
+      },
+      {
+        "case_id": "ab_05",
+        "forward_winner": "tie",
+        "reversed_raw_winner": "tie",
+        "reversed_normalized_winner": "tie",
+        "flipped": false
+      }
+    ],
+    "flip_rate": 0.0,
+    "n_cases": 5
+  },
+  "judge_usage": {
+    "total_calls": 30,
+    "total_prompt_tokens": 8691,
+    "total_completion_tokens": 7401,
+    "total_tokens": 16092
+  }
+}

@@ -1,4 +1,16 @@
+# Environment / secrets
 .env
-__pycache__/
-*.pyc
+
+# Virtual environment
+venv/
 .venv/
+
+# Python cache
+__pycache__/
+*.py[cod]
+
+# Pytest
+.pytest_cache/
+
+# Backup files
+data/test_suite_backup.json

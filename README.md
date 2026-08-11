@@ -1,138 +1,467 @@
 # LLM-as-Judge Evaluation Pipeline
 
-A pointwise LLM-judge pipeline with explicit bias mitigation and judge validation,
-built on Groq (LLaMA as generator, Gemma as judge — two different model families
-on the same provider, since only a Groq key was available).
+A pointwise LLM-as-judge evaluation pipeline for measuring the quality,
+reliability, consistency, and potential biases of an LLM used as an automated
+judge.
+
+The project evaluates model outputs using a structured 1–5 rubric, requires
+evidence for each score, and includes targeted bias probes, test-retest
+validation, and A/B comparison with position-bias testing.
+
+## What This Project Does
+
+Instead of simply trusting an LLM-generated score, this project evaluates the
+**judge itself**.
+
+A model output is evaluated by a separate LLM judge on:
+
+- Correctness
+- Faithfulness
+- Completeness
+- Instruction following
+
+Each criterion receives a score from **1–5** along with supporting evidence
+and rationale.
+
+The pipeline also checks whether the judge is affected by:
+
+- Position/order of answers
+- Verbosity or unnecessary length
+- Sycophantic or confidently-wrong responses
+- Repeated evaluation instability
+
+## Tech Stack
+
+- **Python**
+- **Groq API** — LLM inference
+- **LLaMA 3.1 8B Instant** — generator model
+- **GPT-OSS 20B** — judge model
+- **Requests** — API communication
+- **JSON** — test suites and structured reports
+- **Pytest** — offline unit testing
+- **Environment variables / `.env`** — API configuration
+
+### Models Used
+
+| Role | Model |
+|---|---|
+| Generator | `llama-3.1-8b-instant` |
+| Judge | `openai/gpt-oss-20b` |
+| Provider | Groq |
+
+The recorded evaluation run used these models.
+
+## Pipeline Architecture
+
+```text
+Test Suite
+    │
+    ▼
+Model Output
+    │
+    ▼
+LLM Judge
+    │
+    ├── Correctness
+    ├── Faithfulness
+    ├── Completeness
+    └── Instruction Following
+    │
+    ▼
+1–5 Scores + Evidence + Rationale
+    │
+    ├───────────────┬────────────────┐
+    ▼               ▼                ▼
+Verbosity       Sycophancy      Test-Retest
+Probe           Probe           Consistency
+    │               │                │
+    └───────────────┴────────────────┘
+                    │
+                    ▼
+             Evaluation Report
+
+A/B Comparison
+    │
+    ├── A vs B
+    └── B vs A
+          │
+          ▼
+   Position-Bias Check
+```
 
 ## Setup
 
+Install the dependencies:
+
 ```bash
 pip install -r requirements.txt
-cp .env.example .env   # then fill in your GROQ_API_KEY
 ```
+
+Create a local environment file:
+
+```bash
+cp .env.example .env
+```
+
+Then add your Groq API key:
+
+```env
+GROQ_API_KEY=your_groq_api_key_here
+```
+
+Keep `.env` private and do not commit it to Git.
 
 ## Usage
 
-Judge a suite and run bias/validation checks:
+### Run the Main Evaluation
+
 ```bash
 python -m src.pipeline run --suite data/test_suite.json --probes data/probes.json
 ```
 
-A/B compare two prompt configs (required deliverable — declares a winner):
-```bash
-python -m src.pipeline compare \
-  --suite data/test_suite_v1.json --suite-b data/test_suite_v2.json \
-  --label-a loose_prompt --label-b strict_prompt
+This runs:
+
+- Pointwise judging
+- Verbosity probe
+- Sycophancy probe
+- Test-retest consistency validation
+
+The report is written to:
+
+```text
+results/suite_report.json
 ```
 
-Run the offline unit tests (no API key needed — mocked client):
+### Run the A/B Comparison
+
+Compare two matched configurations:
+
+```bash
+python -m src.pipeline compare \
+  --suite data/test_suite_v1.json \
+  --suite-b data/test_suite_v2.json \
+  --label-a loose_prompt \
+  --label-b strict_prompt
+```
+
+The two suites must contain matched cases in the same order.
+
+The comparison report is written to:
+
+```text
+results/ab_comparison.json
+```
+
+### Run Offline Tests
+
+The unit tests use a mocked client and do not require a Groq API key:
+
 ```bash
 python -m pytest tests/ -v
 ```
 
-Results land in `results/`: `suite_report.json`, `ab_comparison.json`, and the full
-auditable judge log (`judge_logs.jsonl` — every prompt + raw response + token usage).
+The current test suite passes **7 tests**.
 
-## Judging mode
+## Judging Mode
 
-**Pointwise scoring** is the primary mode (`src/judge.py`): each case gets an
-independent 1–5 score per rubric criterion, with a required evidence quote per
-criterion. This is used for the main suite report because it scales linearly
-(1 call/case vs. pairwise's O(n²) or O(n) with a fixed baseline) and gives
-interpretable per-criterion diagnostics, not just a relative ranking.
+### Pointwise Evaluation
 
-**Pairwise comparison** (`src/bias/position_bias.py`) is used specifically for
-the position-bias check and could be extended into the main A/B path — pairwise
-is the stronger choice when you only care about "is B better than A" and want to
-cancel out each judge's personal scale/anchor drift, at the cost of not telling
-you *why* one is better on a per-criterion basis.
+Pointwise scoring is the primary evaluation mode and is implemented in
+`src/judge.py`.
+
+Each case is independently evaluated against the rubric. The judge returns
+structured JSON containing:
+
+- Per-criterion scores
+- Evidence
+- Rationale
+- Overall score
+- Pass/fail verdict
+
+Pointwise evaluation is used for the main suite because it provides
+interpretable per-criterion diagnostics and scales linearly with the number
+of cases.
+
+### Pairwise Evaluation
+
+Pairwise comparison is used for A/B evaluation and position-bias checks.
+
+Each comparison is evaluated in both orders:
+
+```text
+A vs B
+B vs A
+```
+
+The normalized results are then compared to determine whether changing the
+presentation order changes the verdict.
 
 ## Rubric
 
-`correctness`, `faithfulness`, `completeness`, `instruction_following` — each
-scored 1–5 with a mandatory evidence field (a quote/paraphrase from the model
-output). A score above 2 without evidence is disallowed by the judge prompt.
-Case-specific extra criteria can be added per test case via the `criteria` field.
+The main rubric contains four criteria:
 
-## Bias handling — what was implemented and measured
+- `correctness`
+- `faithfulness`
+- `completeness`
+- `instruction_following`
 
-| Bias | Mitigation implemented | Where |
+Each criterion is scored from **1 to 5**.
+
+A mandatory evidence field is required for every criterion.
+
+Case-specific criteria can also be supplied through the `criteria` field in
+individual test cases.
+
+## Bias Handling
+
+| Bias / Failure Mode | Mitigation / Measurement | Implementation |
 |---|---|---|
-| Position (A/B order) | Every pairwise comparison run in both orders; flip rate reported | `bias/position_bias.py` |
-| Verbosity / length | Rubric explicitly instructs "length is not a quality signal"; probed with a padded-wrong vs. terse-correct pair | `bias/verbosity_probe.py` |
-| Self-enhancement | Judge (Gemma) is a different model family from the generator (LLaMA) | `config.py` |
-| Sycophancy / style | Evidence-quote requirement per criterion; probed with a confidently-wrong answer | `judge.py`, `bias/sycophancy_probe.py` |
-| Score clustering | Few-shot numeric anchors (1–5, each anchor described) embedded directly in the judge system prompt | `judge.py` |
+| Position bias | Evaluate pairwise comparisons in both orders and measure normalized winner changes | `bias/position_bias.py` |
+| Verbosity / length bias | Explicitly instruct the judge that length is not a quality signal; test padded-wrong vs terse-correct responses | `bias/verbosity_probe.py` |
+| Self-enhancement | Generator and judge can use different model families | `config.py` |
+| Sycophancy / style | Evidence requirement plus confidently-wrong adversarial probe | `judge.py`, `bias/sycophancy_probe.py` |
+| Score clustering | Few-shot 1–5 numeric anchors are included in the judge prompt | `judge.py` |
 
-## Judge validation
+These probes test specific failure modes; they do not prove that the judge is
+completely free of bias.
 
-**Test-retest consistency** (`validation/consistency.py`): re-runs the same
-case `CONSISTENCY_RUNS` times (default 3) and reports how often the pass/fail
-verdict flips. This was chosen over human-agreement or a full adversarial suite
-because it needed no external gold-label dataset to still produce real evidence
-of (in)stability — appropriate for the time available, and honestly reported as
-the one validation method implemented rather than claimed as complete coverage.
+## Judge Validation
+
+### Test-Retest Consistency
+
+`validation/consistency.py` re-runs selected cases multiple times and measures
+how often the pass/fail verdict changes.
+
+The current configuration uses:
+
+```text
+CONSISTENCY_RUNS=3
+```
+
+This provides a lightweight measure of judgment stability without requiring
+an external human-labeled gold dataset.
+
+It does not replace human agreement testing or a larger validation benchmark.
+
+## Evaluation Results
+
+The successful main evaluation was run on **10 cases**.
+
+### Main Suite
+
+| Metric | Result |
+|---|---:|
+| Cases evaluated | 10 |
+| Pass rate | **40.0%** |
+| Mean overall score | **2.80 / 5** |
+| Correctness mean | **3.00 / 5** |
+| Faithfulness mean | **3.00 / 5** |
+| Completeness mean | **2.70 / 5** |
+| Instruction-following mean | **2.70 / 5** |
+
+The suite intentionally contains both correct and flawed model outputs.
+Therefore, the **40.0% pass rate should not be interpreted as 40% judge
+accuracy**.
+
+### Bias Probes
+
+**Verbosity**
+
+- Probes: 3
+- Fooled rate: **0.0%**
+
+**Sycophancy**
+
+- Probes: 3
+- Fooled rate: **0.0%**
+
+The judge was not fooled by the specific verbosity and sycophancy probes used
+in this run.
+
+### Test-Retest Consistency
+
+- Cases: 3
+- Runs per case: 3
+- Flip rate: **0.0%**
+
+All sampled cases produced the same pass/fail verdict across repeated runs.
+
+### A/B Comparison
+
+The A/B evaluation used five matched cases.
+
+| Metric | v1 | v2 |
+|---|---:|---:|
+| Cases | 5 | 5 |
+| Pass rate | 100% | 100% |
+| Mean score | **5.00** | **5.00** |
+
+**Winner:** Tie  
+**Score difference:** 0.00  
+**Position-bias flip rate:** 0.0%
+
+Neither configuration was preferred by the judge on this sample.
 
 ## Discussion
 
-**How biased was the judge before vs. after mitigation?**
-Run `python -m src.pipeline run --suite data/test_suite.json --probes data/probes.json`
-and check `results/suite_report.json` → `bias_report`. The `fooled_rate` in the
-verbosity and sycophancy probe results is the direct "before mitigation would
-have looked like X" signal — a probe case is scored using the *same* mitigated
-rubric, so a nonzero fooled_rate means the mitigations in the prompt (length
-instruction, evidence requirement) are not fully closing the gap, which is worth
-reporting honestly rather than assuming the rubric wording alone solved it.
-The position-bias `flip_rate` in `results/ab_comparison.json` is the direct
-measure of how often order alone changes the verdict.
+The evaluation provides three useful signals:
 
-**Would I let this gate a release?**
-Not on its own, and not yet. A single judge model, one validation method, and a
-15-case suite is enough to catch gross regressions and get real signal on bias
-direction, but it is not enough statistical power to trust as a hard release
-gate. I'd treat a clearly failing pass_rate or a high position-bias/fooled_rate
-as a strong stop-ship signal, but I would not treat a passing report alone as
-sufficient — it should sit alongside human spot-checks, especially for
-close A/B calls (small `score_diff_b_minus_a`) where the position-bias flip
-rate suggests the judge itself is noisy at the margin.
+1. The judge distinguished several intentionally correct and incorrect answers
+   in the main suite.
+2. The verbosity and sycophancy probes had a **0.0% fooled rate**.
+3. The sampled test-retest cases had a **0.0% flip rate**.
 
-**Was retrieval or generation the weaker link (for cases with an
-`expected_output`)?** Not directly applicable to this problem (that framing is
-for the RAG task) — but the analogous read here is: the *judge* was the
-component most likely to be the weak link, not the generator, since the probes
-are specifically designed to catch the judge failing rather than the generator.
+These results indicate stable behavior on the tested cases, but they do not
+prove that the judge is unbiased or production-ready.
 
-## Project structure
+A true **before-vs-after mitigation experiment was not performed**. Therefore,
+the 0.0% bias-probe results represent the performance of the mitigated
+pipeline on the selected probes, rather than a measured improvement over an
+unmitigated baseline.
 
-```
-src/
-  config.py                  env-based config, no hardcoded secrets
-  groq_client.py             Groq API wrapper + usage tracking
-  judge.py                   rubric, prompt, structured parsing + JSON repair retry
-  generator.py                fills in model_output when a suite doesn't supply one
-  aggregate.py                suite-level rollup + A/B comparison
-  pipeline.py                  CLI entrypoint (run / compare)
-  bias/
-    position_bias.py          pairwise both-orders flip-rate check
-    verbosity_probe.py        padded-wrong vs terse-correct probe
-    sycophancy_probe.py       confidently-wrong probe
-  validation/
-    consistency.py            test-retest flip-rate check
-data/
-  test_suite.json             15 pointwise cases, mixed correct/flawed
-  test_suite_v1.json / v2.json  matched cases for the required A/B demo
-  probes.json                 adversarial probe cases
-tests/
-  test_parsing.py             offline unit tests (mocked client, no API needed)
-results/                       generated at runtime (report + full judge log)
+### Would I Use This as a Release Gate?
+
+Not on its own.
+
+The current pipeline is useful for regression detection and identifying
+obvious judge failures, but a production release gate would require:
+
+- A larger evaluation suite
+- Human-labeled reference judgments
+- Human-vs-LLM agreement measurements
+- Broader adversarial testing
+- Evaluation across multiple judge models/providers
+- Statistical uncertainty estimates
+
+### Retrieval vs Generation
+
+Retrieval is not directly applicable to this project because the pipeline
+evaluates supplied model outputs rather than a retrieval → generation chain.
+
+The main component being validated is the **LLM judge itself**: whether it
+can score outputs according to the rubric, resist the tested biases, and
+produce stable judgments.
+
+## API Usage and Rate Limiting
+
+The main 10-case evaluation recorded:
+
+```text
+Judge calls:       30
+Prompt tokens:     17,734
+Completion tokens: 15,608
+Total tokens:      33,342
 ```
 
-## Known limitations (stated honestly, not glossed over)
+The A/B comparison recorded:
 
-- Only one validation method implemented (test-retest), not human-agreement or
-  a full adversarial suite — time-constrained choice, noted rather than hidden.
-- Self-enhancement mitigation uses two model families from the same provider
-  (Groq), not two separate providers — a genuinely independent provider would
-  be a stronger check.
-- The 15-case suite gives directional signal, not statistically robust
-  confidence intervals on pass rate or win rate.
+```text
+Judge calls:       30
+Prompt tokens:     8,691
+Completion tokens: 7,401
+Total tokens:      16,092
+```
+
+Because live Groq API evaluation can encounter rate limits, the Groq client
+implements retry and backoff handling for rate-limited and server-error
+responses.
+
+## Project Structure
+
+```text
+llm_judge_pipeline/
+│
+├── src/
+│   ├── config.py
+│   │   └── Environment-based configuration
+│   │
+│   ├── groq_client.py
+│   │   └── Groq API wrapper + usage tracking + retry/backoff
+│   │
+│   ├── judge.py
+│   │   └── Rubric, judge prompt, structured parsing + JSON repair
+│   │
+│   ├── generator.py
+│   │   └── Generates model outputs when a suite does not supply one
+│   │
+│   ├── aggregate.py
+│   │   └── Suite-level rollup and A/B comparison
+│   │
+│   ├── pipeline.py
+│   │   └── CLI entrypoint (run / compare)
+│   │
+│   ├── bias/
+│   │   ├── position_bias.py
+│   │   ├── verbosity_probe.py
+│   │   └── sycophancy_probe.py
+│   │
+│   └── validation/
+│       └── consistency.py
+│
+├── data/
+│   ├── test_suite.json
+│   ├── test_suite_v1.json
+│   ├── test_suite_v2.json
+│   └── probes.json
+│
+├── tests/
+│   └── test_parsing.py
+│
+├── results/
+│   ├── suite_report.json
+│   ├── ab_comparison.json
+│   └── judge_logs.jsonl
+│
+├── .env.example
+├── .gitignore
+├── requirements.txt
+└── README.md
+```
+
+## Known Limitations
+
+- The main evaluation currently uses only **10 cases**, so the results provide
+  directional rather than statistically robust evidence.
+- Only test-retest consistency is implemented as formal validation.
+- No human-vs-LLM agreement study was performed.
+- The bias probes are targeted and do not cover every possible judge bias.
+- The A/B comparison uses only five matched cases.
+- Self-enhancement mitigation uses different model families through the same
+  provider rather than completely independent providers.
+- Free-tier API rate limits can affect large or bursty evaluation runs.
+- The current experiment does not provide a true before-vs-after measurement
+  of bias mitigation.
+- The reported results are tied to the specific models, prompts,
+  configuration, and test data used in the recorded run.
+
+## Future Improvements
+
+- Expand the evaluation suite substantially.
+- Add human-labeled gold-standard evaluations.
+- Measure human-vs-LLM judge agreement.
+- Add more adversarial bias probes.
+- Compare multiple judge models and providers.
+- Add confidence intervals and statistical significance testing.
+- Run controlled evaluations with and without each mitigation.
+
+## Current Evaluation Summary
+
+```text
+Main Suite
+  Cases evaluated          10
+  Pass rate                40.0%
+  Mean score               2.80 / 5
+
+Bias Probes
+  Verbosity fooled rate    0.0%
+  Sycophancy fooled rate   0.0%
+
+Consistency
+  Test-retest flip rate    0.0%
+
+A/B Comparison
+  v1 mean score            5.00
+  v2 mean score            5.00
+  Winner                   Tie
+  Position-bias flip rate  0.0%
+```

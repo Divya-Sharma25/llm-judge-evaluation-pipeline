@@ -3,6 +3,7 @@ Thin wrapper around Groq's OpenAI-compatible chat completions endpoint.
 Tracks token usage and call count so the pipeline can report judge cost (requirement #4).
 """
 import requests
+import time
 from . import config
 
 
@@ -28,9 +29,23 @@ class GroqClient:
             "temperature": temperature,
             "max_tokens": max_tokens,
         }
-        resp = requests.post(config.GROQ_BASE_URL, headers=headers, json=payload, timeout=60)
-        resp.raise_for_status()
-        data = resp.json()
+
+        max_retries = 5
+        for attempt in range(max_retries):
+            resp = requests.post(config.GROQ_BASE_URL, headers=headers, json=payload, timeout=60)
+            if resp.status_code == 429 or resp.status_code >= 500:
+                retry_after = resp.headers.get("Retry-After")
+                wait = float(retry_after) if retry_after else (2 ** attempt)
+                print(f"  [rate limited/server error {resp.status_code}, waiting {wait:.1f}s, "
+                      f"attempt {attempt + 1}/{max_retries}]")
+                time.sleep(wait)
+                continue
+            resp.raise_for_status()
+            data = resp.json()
+            break
+        else:
+            resp.raise_for_status()  # exhausted retries, raise the last error
+            data = resp.json()
 
         self.total_calls += 1
         usage = data.get("usage", {})

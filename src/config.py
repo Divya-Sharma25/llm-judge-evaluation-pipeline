@@ -4,6 +4,29 @@ Copy .env.example to .env and fill in GROQ_API_KEY before running.
 """
 import os
 
+def _load_dotenv():
+    """Minimal .env loader (no external dependency). Does not override vars
+    already set in the real shell environment. Checks cwd and project root
+    so it works whether you run from the repo root or from inside src/."""
+    project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    candidates = [".env", os.path.join(project_root, ".env")]
+    for path in candidates:
+        if not os.path.exists(path):
+            continue
+        with open(path) as f:
+            for line in f:
+                line = line.strip()
+                if not line or line.startswith("#") or "=" not in line:
+                    continue
+                key, _, value = line.partition("=")
+                key, value = key.strip(), value.strip()
+                if key and key not in os.environ:
+                    os.environ[key] = value
+        break  # first match wins
+
+
+_load_dotenv()
+
 GROQ_API_KEY = os.environ.get("GROQ_API_KEY", "")
 GROQ_BASE_URL = os.environ.get("GROQ_BASE_URL", "https://api.groq.com/openai/v1/chat/completions")
 
