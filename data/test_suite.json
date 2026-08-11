@@ -1,0 +1,122 @@
+[
+  {
+    "id": "case_01",
+    "system_prompt": "You are a helpful Python tutor. Answer concisely and correctly.",
+    "input": "What is the time complexity of searching in a Python dict?",
+    "model_output": "Average-case O(1) due to hashing, but worst-case O(n) if there are many hash collisions.",
+    "expected_output": "O(1) average case, O(n) worst case due to hash collisions.",
+    "criteria": ["mentions average and worst case explicitly"]
+  },
+  {
+    "id": "case_02",
+    "system_prompt": "You are a helpful Python tutor. Answer concisely and correctly.",
+    "input": "What is the time complexity of searching in a Python list?",
+    "model_output": "Searching a Python list is O(1) because Python lists are implemented as hash tables.",
+    "expected_output": "O(n), linear search, since lists are not hashed.",
+    "criteria": ["must not confuse list with dict internals"]
+  },
+  {
+    "id": "case_03",
+    "system_prompt": "You are a DSA interview coach.",
+    "input": "Explain the sliding window technique in one or two sentences.",
+    "model_output": "Sliding window maintains a subrange of a sequence and expands/shrinks its boundaries incrementally, avoiding recomputation from scratch, which turns many O(n^2) brute-force scans into O(n).",
+    "expected_output": null,
+    "criteria": ["mentions avoiding recomputation", "mentions complexity improvement"]
+  },
+  {
+    "id": "case_04",
+    "system_prompt": "You are a DSA interview coach.",
+    "input": "When would sliding window NOT be an appropriate technique?",
+    "model_output": "Sliding window works for basically every array problem, so it is almost always appropriate.",
+    "expected_output": "When the required subrange isn't contiguous, or when shrinking/expanding the window doesn't monotonically help (e.g. negative numbers in a sum-based window).",
+    "criteria": ["should mention non-contiguous or non-monotonic cases as exceptions"]
+  },
+  {
+    "id": "case_05",
+    "system_prompt": "You are a machine learning teaching assistant.",
+    "input": "What does the C parameter control in an SVM with a soft margin?",
+    "model_output": "C controls the trade-off between maximizing the margin and minimizing classification error on the training data; a large C penalizes misclassification heavily (narrower margin, less tolerance), a small C allows a wider margin with more tolerated violations.",
+    "expected_output": "C is the regularization strength trading off margin width against misclassification penalty.",
+    "criteria": []
+  },
+  {
+    "id": "case_06",
+    "system_prompt": "You are a machine learning teaching assistant.",
+    "input": "What does increasing K do in K-Means clustering, in terms of bias/variance?",
+    "model_output": "Increasing K always improves the model with no downside, so you should pick the largest K possible.",
+    "expected_output": "Increasing K reduces within-cluster variance (better fit) but risks overfitting to noise and eventually gives diminishing/meaningless clusters; there's a bias-variance trade-off, not a free improvement.",
+    "criteria": []
+  },
+  {
+    "id": "case_07",
+    "system_prompt": "You are a backend engineering assistant.",
+    "input": "Why should you use parameterized queries instead of string-formatted SQL?",
+    "model_output": "Parameterized queries prevent SQL injection because user input is sent separately from the query structure, so it's never interpreted as executable SQL.",
+    "expected_output": "Prevents SQL injection by separating code from data.",
+    "criteria": []
+  },
+  {
+    "id": "case_08",
+    "system_prompt": "You are a backend engineering assistant.",
+    "input": "Is it safe to store API keys directly in a public GitHub repo if the repo is only used for demos?",
+    "model_output": "Yes, it's fine for demo repos since nobody will misuse a demo key.",
+    "expected_output": "No — public repos are scraped continuously by bots; any exposed key can be abused regardless of repo purpose. Use env vars / secrets and .gitignore.",
+    "criteria": []
+  },
+  {
+    "id": "case_09",
+    "system_prompt": "You are a statistics tutor.",
+    "input": "In an ANOVA test, what does a small p-value indicate?",
+    "model_output": "A small p-value suggests it's unlikely all group means are equal, i.e., there's likely a significant difference between at least two groups.",
+    "expected_output": "Evidence against the null hypothesis of equal group means.",
+    "criteria": []
+  },
+  {
+    "id": "case_10",
+    "system_prompt": "You are a statistics tutor.",
+    "input": "Does a small p-value in ANOVA tell you WHICH groups differ?",
+    "model_output": "Yes, ANOVA directly tells you which specific groups differ from each other.",
+    "expected_output": "No — ANOVA only tells you that at least one group differs; you need a post-hoc test (e.g. Tukey HSD) to find which pairs.",
+    "criteria": []
+  },
+  {
+    "id": "case_11",
+    "system_prompt": "You are a RAG systems engineer.",
+    "input": "Why might you re-chunk with overlap instead of non-overlapping chunks?",
+    "model_output": "Overlap prevents relevant context from being split across a chunk boundary and lost, at the cost of some storage/embedding redundancy.",
+    "expected_output": null,
+    "criteria": []
+  },
+  {
+    "id": "case_12",
+    "system_prompt": "You are a RAG systems engineer.",
+    "input": "If your RAG app hallucinates answers when no relevant context is retrieved, what's the most direct fix?",
+    "model_output": "Add a relevance/similarity threshold on retrieved chunks, and explicitly instruct (and structurally force) the model to say it doesn't know when nothing clears that threshold, rather than answering from parametric memory.",
+    "expected_output": null,
+    "criteria": []
+  },
+  {
+    "id": "case_13",
+    "system_prompt": "You are a compiler design tutor.",
+    "input": "What's the key difference between LL(1) and LR(1) parsers?",
+    "model_output": "LL(1) parses top-down using leftmost derivation with 1 lookahead token; LR(1) parses bottom-up using rightmost derivation in reverse, also with 1 lookahead, and LR(1) can handle a strictly larger class of grammars.",
+    "expected_output": "LL(1) = top-down, leftmost derivation. LR(1) = bottom-up, rightmost derivation in reverse. LR(1) handles more grammars.",
+    "criteria": []
+  },
+  {
+    "id": "case_14",
+    "system_prompt": "You are a compiler design tutor.",
+    "input": "Can every LL(1) grammar be parsed by an LR(1) parser?",
+    "model_output": "No, LL(1) and LR(1) grammar classes are completely disjoint sets with no overlap.",
+    "expected_output": "Yes — every LL(1) grammar is also LR(1) (LL(1) is a subset of LR(1)), not the other way around.",
+    "criteria": []
+  },
+  {
+    "id": "case_15",
+    "system_prompt": "You are a helpful coding assistant. Only answer what is asked.",
+    "input": "Write one line of Python to reverse a string s.",
+    "model_output": "Here's a full explanation of string reversal in Python with three different approaches: slicing, reversed(), and a manual loop. First, slicing: s[::-1] reverses the string using Python's extended slice syntax with a step of -1, which is the most Pythonic method. Second, you could use ''.join(reversed(s)) which... [continues for several paragraphs]",
+    "expected_output": "s[::-1]",
+    "criteria": ["must follow the 'only answer what is asked' instruction and stay to one line"]
+  }
+]

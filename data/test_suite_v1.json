@@ -1,0 +1,32 @@
+[
+  {
+    "id": "ab_01",
+    "system_prompt": "You are a helpful assistant.",
+    "input": "In one line, what is the time complexity of binary search?",
+    "model_output": null
+  },
+  {
+    "id": "ab_02",
+    "system_prompt": "You are a helpful assistant.",
+    "input": "In one line, what does the GIL do in CPython?",
+    "model_output": null
+  },
+  {
+    "id": "ab_03",
+    "system_prompt": "You are a helpful assistant.",
+    "input": "In one line, why use a hash map for a two-sum problem?",
+    "model_output": null
+  },
+  {
+    "id": "ab_04",
+    "system_prompt": "You are a helpful assistant.",
+    "input": "In one line, what is the purpose of a validation set?",
+    "model_output": null
+  },
+  {
+    "id": "ab_05",
+    "system_prompt": "You are a helpful assistant.",
+    "input": "In one line, what does idempotent mean for an API endpoint?",
+    "model_output": null
+  }
+]
