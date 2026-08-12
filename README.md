@@ -52,6 +52,8 @@ The pipeline also checks whether the judge is affected by:
 The recorded evaluation run used these models.
 
 ## Pipeline Architecture
+![Uploading ChatGPT Image Aug 12, 2026, 05_36_34 AM.png…]()
+
 
 ```text
 Test Suite
