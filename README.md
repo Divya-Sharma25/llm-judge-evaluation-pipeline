@@ -52,8 +52,6 @@ The pipeline also checks whether the judge is affected by:
 The recorded evaluation run used these models.
 
 ## Pipeline Architecture
-![Pipeline Architecture](Project Architecture.png)
-
 
 ```text
 Test Suite
